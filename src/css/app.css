@@ -1,0 +1,64 @@
+#start {
+    margin: 200px auto 200px;
+    width: 200px;
+    height: 200px;
+    font-size: 36px;
+    color: white;
+    text-align: center;
+    line-height: 200px;
+    cursor: pointer;
+    border-radius: 50%;
+    background: #1d8fe2;
+}
+
+#start:hover {
+    background-color: #28abe3;
+}
+
+.prize-title {
+    font-size: 100px;
+}
+
+.window-content {
+    justify-content: center;
+}
+
+.prize-row {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    justify-content: space-evenly;
+    margin: 50px auto 0;
+    width: 800px;
+}
+
+.prize-column {
+    height: 200px;
+    line-height: 200px;
+    text-align: center;
+    
+}
+
+.prize-column-1 {
+    width: 600px;
+    font-size: 72px;
+}
+
+.prize-column-2 {
+    width: 400px;
+    font-size: 72px;
+}
+
+.prize-column-3 {
+    width: 250px;
+    font-size: 60px;
+}
+
+.prize-column-4 {
+    width: 200px;
+    font-size: 48px;
+}
+
+.hide {
+    display: none;
+}

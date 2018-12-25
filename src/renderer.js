@@ -1,4 +1,3 @@
-const array = require('lodash/array');
 const yaml = require('node-yaml');
 const path = require('path');
 
@@ -6,7 +5,7 @@ const em1 = require('./config/1.js');
 const em2 = require('./config/2.js');
 
 let levels = null;
-let currentIndex = 0;
+let currentIndex = 0, intervals = [];
 let em = [];
 
 let elPrize = document.getElementById('prize');
@@ -39,14 +38,29 @@ document.getElementById('btn-next').onclick = function() {
     fillPrize();
 };
 
-document.getElementById('btn-retrieve').onclick = function() {
+document.getElementById('btn-retrieve').onclick = function(event) {
+    const target = event.currentTarget;
+
     let current = levels[currentIndex];
     const procs = parseInt(current.procs, 10);
-    const prizeColumns = document.querySelectorAll('.prize-column');
+
+    if (target.innerText == '点击抽奖') {
+        intervals = [];
+        const prizeColumns = document.querySelectorAll('.prize-column');
+
+        for (let i = 0; i < procs; i++) {
+            startCalc(prizeColumns[i], em[i]);
+        }
+
+        target.innerText = '停止';
+        return;
+    }
 
     for (let i = 0; i < procs; i++) {
-        startCalc(prizeColumns[i], em[i]);
+        clearInterval(intervals[i]);
     }
+    
+    target.innerText = '点击抽奖';
 };
 
 function fillPrize() {
@@ -72,16 +86,29 @@ function fillPrize() {
     elPrizeRow.innerHTML = '';
     document.querySelector('.prize-title').innerText = current.title;
 
+    let newEms = [];
     let procs = parseInt(current.procs, 10);
+    let size = Math.floor(em.length / procs);
+    
     for (let i = 0; i < procs; i++) {
         let elPrizeColumn = document.createElement('div');
         elPrizeColumn.classList.add('prize-column');
         elPrizeColumn.classList.add('prize-column-' + procs);
         elPrizeColumn.innerText = '来学网';
         elPrizeRow.appendChild(elPrizeColumn);
+
+        let current = [];
+        for (let j = 0; j < size; j++) {
+            current.push(em.pop());
+        }
+        newEms.push(current);
     }
 
-    em = array.chunk(em, em.length / procs);
+    for (let i = 0; i < em.length; i++) {
+        newEms[i].push(em[i]);
+    }
+
+    em = newEms;
 }
 
 function startCalc(el, em) {
@@ -91,7 +118,5 @@ function startCalc(el, em) {
         el.innerText = em[index];
     }, 100);
 
-    setTimeout(function() {
-        clearInterval(interval);
-    }, 10000);
+    intervals.push(interval);
 }

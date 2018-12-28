@@ -1,7 +1,7 @@
 levels:
   - {title: "五等奖", procs: 5, data: "1,2"}
-  - {title: "四等奖", procs: 4, data: "1,2"}
-  - {title: "三等奖", procs: 4, data: "1,2"}
-  - {title: "二等奖", procs: 3, data: "1,2"}
-  - {title: "一等奖", procs: 2, data: "1"}
+  - {title: "四等奖", procs: 5, data: "1,2"}
+  - {title: "三等奖", procs: 5, data: "1,2"}
+  - {title: "二等奖", procs: 5, data: "1,2"}
+  - {title: "一等奖", procs: 3, data: "1"}
   - {title: "特等奖", procs: 1, data: "1"}

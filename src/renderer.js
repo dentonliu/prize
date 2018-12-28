@@ -1,9 +1,6 @@
 const yaml = require('node-yaml');
 const path = require('path');
 
-const em1 = require('./config/1.js');
-const em2 = require('./config/2.js');
-
 let levels = null;
 let currentIndex = 0, intervals = [];
 let em = [];
@@ -36,6 +33,10 @@ document.getElementById('btn-next').onclick = function() {
 
     currentIndex++;
     fillPrize();
+};
+
+document.getElementById('btn-config').onclick = function() {
+    toggleConfig();
 };
 
 document.getElementById('btn-retrieve').onclick = function(event) {
@@ -71,6 +72,9 @@ function fillPrize() {
         return;
     }
 
+    const em1 = document.getElementById('em1').value.split('\n');
+    const em2 = document.getElementById('em2').value.split('\n');
+
     let data = current.data;
     if (data === "1") {
         em = em1;
@@ -99,7 +103,7 @@ function fillPrize() {
 
         let current = [];
         for (let j = 0; j < size; j++) {
-            current.push(em.pop());
+            current.push(em.pop().trim());
         }
         newEms.push(current);
     }
@@ -119,4 +123,21 @@ function startCalc(el, em) {
     }, 100);
 
     intervals.push(interval);
+}
+
+function toggleConfig() {
+    toggleEl(document.getElementById('config'));
+}
+
+function toggleEl(el) {
+    if (el.classList.contains('hide')) {
+        el.classList.remove('hide');
+        return;
+    }
+
+    el.classList.add('hide');
+
+    if (el.id == 'config') {
+        fillPrize();
+    }
 }

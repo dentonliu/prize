@@ -19,6 +19,11 @@ yaml.read(path.resolve(__dirname, 'config/app.yaml'), (err, data) => {
 
 // 开始抽奖事件
 document.getElementById('start').onclick = function() {
+    if (!document.getElementById('em1').value || !document.getElementById('em2').value) {
+        alert('还没有添加名单');
+        return;
+    }
+    
     this.classList.add('hide');
     elPrize.classList.remove('hide');
     document.querySelector('.toolbar-footer').classList.remove('hide');

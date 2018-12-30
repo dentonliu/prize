@@ -3,9 +3,13 @@ const path = require('path');
 
 let levels = null;
 let currentIndex = 0, intervals = [];
-let em = [];
+let em = [], list = [], tempEm = [];
 
 let elPrize = document.getElementById('prize');
+
+
+let em1 = document.getElementById('em1').value.split('\n');
+let em2 = document.getElementById('em2').value.split('\n');
 
 // 加载配置文件
 yaml.read(path.resolve(__dirname, 'config/app.yaml'), (err, data) => {
@@ -49,27 +53,64 @@ document.getElementById('btn-retrieve').onclick = function(event) {
 
     let current = levels[currentIndex];
     const procs = parseInt(current.procs, 10);
+    const prizeColumns = document.querySelectorAll('.prize-column');
 
     if (target.innerText == '点击抽奖') {
+        resetEmployees();
+
         intervals = [];
-        const prizeColumns = document.querySelectorAll('.prize-column');
 
         for (let i = 0; i < procs; i++) {
-            startCalc(prizeColumns[i], em[i]);
+            startCalc(prizeColumns[i], i);
         }
 
         target.innerText = '停止';
         return;
     }
-
+    
+    let tempList = [];
     for (let i = 0; i < procs; i++) {
         clearInterval(intervals[i]);
+
+        em[i].splice(tempEm[i], 1);
+        tempList.push(prizeColumns[i].innerText);
+
+        let found = false;
+        for (let j = em1.length - 1; j >=0; j--) {
+            if (em1[j] == prizeColumns[i].innerText) {
+                em1.splice(j, 1);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            for (let j = em2.length - 1; j >=0; j--) {
+                if (em2[j] == prizeColumns[i].innerText) {
+                    em2.splice(j, 1);
+                    break;
+                }
+            }   
+        }
     }
     
+    document.getElementById('em1').value = em1.join("\n");
+    document.getElementById('em2').value = em2.join("\n");
+    list.push(tempList.join());
+
     target.innerText = '点击抽奖';
 };
 
+document.getElementById('btn-list').onclick = function() {
+    if (list.length <= 0) {
+        return alert('没有中奖名单');
+    }
+
+    return alert(list.join("\n"));
+};
+
 function fillPrize() {
+    list = [];
     let current = levels[currentIndex];
 
     if (current === null) {
@@ -77,8 +118,31 @@ function fillPrize() {
         return;
     }
 
-    const em1 = document.getElementById('em1').value.split('\n');
-    const em2 = document.getElementById('em2').value.split('\n');
+    let elPrizeRow = document.querySelector('.prize-row');
+    elPrizeRow.innerHTML = '';
+    document.querySelector('.prize-title').innerText = current.title;
+
+    let procs = parseInt(current.procs, 10);
+    
+    for (let i = 0; i < procs; i++) {
+        let elPrizeColumn = document.createElement('div');
+        elPrizeColumn.classList.add('prize-column');
+        elPrizeColumn.classList.add('prize-column-' + procs);
+        elPrizeColumn.innerText = '来学网';
+        elPrizeRow.appendChild(elPrizeColumn);
+    }
+}
+
+function resetEmployees() {
+    let current = levels[currentIndex];
+
+    if (current === null) {
+        console.err('数据错误');
+        return;
+    }
+
+    em1 = document.getElementById('em1').value.split('\n');
+    em2 = document.getElementById('em2').value.split('\n');
 
     let data = current.data;
     if (data === "1") {
@@ -91,21 +155,11 @@ function fillPrize() {
         // nothing to do
     }
 
-    let elPrizeRow = document.querySelector('.prize-row');
-    elPrizeRow.innerHTML = '';
-    document.querySelector('.prize-title').innerText = current.title;
-
     let newEms = [];
     let procs = parseInt(current.procs, 10);
     let size = Math.floor(em.length / procs);
-    
-    for (let i = 0; i < procs; i++) {
-        let elPrizeColumn = document.createElement('div');
-        elPrizeColumn.classList.add('prize-column');
-        elPrizeColumn.classList.add('prize-column-' + procs);
-        elPrizeColumn.innerText = '来学网';
-        elPrizeRow.appendChild(elPrizeColumn);
 
+    for (let i = 0; i < procs; i++) {
         let current = [];
         for (let j = 0; j < size; j++) {
             current.push(em.pop().trim());
@@ -120,11 +174,12 @@ function fillPrize() {
     em = newEms;
 }
 
-function startCalc(el, em) {
+function startCalc(el, i) {
     let interval = setInterval(function() {
-        let index = Math.ceil(Math.random() * (em.length - 1));
+        const index = Math.round(Math.random() * (em[i].length - 1));
 
-        el.innerText = em[index];
+        el.innerText = em[i][index];
+        tempEm[i] = index;
     }, 100);
 
     intervals.push(interval);
@@ -141,8 +196,4 @@ function toggleEl(el) {
     }
 
     el.classList.add('hide');
-
-    if (el.id == 'config') {
-        fillPrize();
-    }
 }
